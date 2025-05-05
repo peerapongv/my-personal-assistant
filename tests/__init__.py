@@ -1,1 +1,1 @@
-"""Test package for Jira Assistant.""" 
+"""Test package for Jira Assistant."""
