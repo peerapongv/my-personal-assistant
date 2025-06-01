@@ -4,7 +4,7 @@ This module provides a unified interface to interact with various LLM providers
 (OpenAI, Vertex AI, Claude) through LangChain.
 
 Example usage:
-    from jira_assistant.llm_client import LLMClient
+    from my_personal_assistant_api.core.llm_client import LLMClient
 
     # Initialize the client
     llm_client = LLMClient()
@@ -124,7 +124,7 @@ class LLMClient:
                 self.clients["claude"] = Anthropic(
                     anthropic_api_key=api_key,
                     temperature=0.7,
-                    model="claude-3-sonnet-20240229",  # Correct parameter name for Anthropic
+                    model="claude-3-sonnet-20240229",  # Correct param for Anthropic
                 )
                 logger.info("Claude client initialized successfully")
             except Exception as e:
