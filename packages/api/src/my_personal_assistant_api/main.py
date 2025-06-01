@@ -1,10 +1,11 @@
 """Main FastAPI application for My Personal Assistant API."""
 
 import logging
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from my_personal_assistant_api.core.llm_client import LLMClient, ConfigurationError
+from my_personal_assistant_api.core.llm_client import ConfigurationError, LLMClient
 from my_personal_assistant_shared.types.llm import LLMProvider, LLMRequest, LLMResponse
 
 # Configure logging

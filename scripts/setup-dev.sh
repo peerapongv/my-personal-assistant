@@ -81,10 +81,16 @@ else
   cd ../ui
 fi
 
+# Ensure we are in the project root before formatting
+PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+cd "$PROJECT_ROOT_DIR"
+
 echo "\nFormatting Python code with Ruff..."
 if command_exists ruff; then
-  ruff format .
-  echo "Python code formatting complete."
+  ruff format packages/api packages/shared
+  echo "Python code formatting complete for API and Shared packages." 
+  # You might also want to format any .py files directly in the root if you have them, e.g., setup.py (though you use pyproject.toml)
+  # ruff format *.py # Uncomment if you have .py files in the root to format
 else
   echo "WARNING: ruff command not found. Skipping Python code formatting."
   echo "Ensure ruff is installed in your virtual environment (it should be a dev dependency)."

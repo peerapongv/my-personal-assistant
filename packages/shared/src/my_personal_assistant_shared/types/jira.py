@@ -65,7 +65,9 @@ class JiraIssue(JiraIssueReference):
     reporter: Optional[JiraUser] = Field(None, description="Issue reporter")
     created: datetime = Field(..., description="Creation timestamp")
     updated: datetime = Field(..., description="Last update timestamp")
-    parent: Optional[JiraIssueReference] = Field(None, description="Parent issue if any")
+    parent: Optional[JiraIssueReference] = Field(
+        None, description="Parent issue if any"
+    )
     labels: List[str] = Field(default_factory=list, description="Issue labels")
     components: List[str] = Field(default_factory=list, description="Issue components")
     fields: Dict[str, Any] = Field(
