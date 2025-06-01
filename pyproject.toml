@@ -15,6 +15,8 @@ authors = [
 dependencies = [
     "httpx>=0.24.0",
     "langchain>=0.0.300",
+    "langchain-community>=0.0.1",
+    "langchain-openai>=0.0.1",
     "pydantic>=2.0.0",
     "python-dotenv>=1.0.0",
     "structlog>=23.0.0",
@@ -32,7 +34,8 @@ dev = [
 
 [tool.ruff]
 line-length = 88
-target-version = "py39"
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "F",  # pyflakes
@@ -43,7 +46,7 @@ select = [
 ]
 ignore = []
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["jira_assistant"]
 
 [tool.mypy]

@@ -95,6 +95,47 @@ The project uses `pyproject.toml` for configuration, which includes:
 - Dependencies
 - Development tools configuration (Ruff, mypy, pytest)
 
+### LLM Providers Configuration
+
+This assistant integrates with multiple AI providers through LangChain. To set up the required credentials:
+
+1. Create a `.env` file in the project root with the following variables (add only the providers you want to use):
+
+```
+# OpenAI
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Google Vertex AI
+GOOGLE_CLOUD_PROJECT=your_google_cloud_project_id_here
+
+# Anthropic Claude
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+```
+
+At least one provider must be configured for the LLM client to initialize successfully.
+
+## Usage Examples
+
+### Using the LLM Client
+
+```python
+from jira_assistant.llm_client import LLMClient
+
+# Initialize the client (loads credentials from environment variables)
+llm_client = LLMClient()
+
+# Generate text using the default provider
+response = llm_client.generate("Summarize the key features of Jira")
+
+# Generate text using a specific provider
+response = llm_client.generate(
+    "Explain agile development practices in Jira",
+    provider="claude"  # Options: "openai", "vertex", "claude"
+)
+
+print(response)
+```
+
 ## License
 
 MIT 
