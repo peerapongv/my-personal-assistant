@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from my_personal_assistant_api.core.llm_client import ConfigurationError, LLMClient
 from my_personal_assistant_shared.types.llm import LLMProvider, LLMRequest, LLMResponse
+from my_personal_assistant_api.routers import jira
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +36,8 @@ except ConfigurationError as e:
     logger.error(f"Failed to initialize LLM client: {e}")
     llm_client = None
 
+# Include routers
+app.include_router(jira.router)
 
 @app.get("/")
 async def root() -> dict[str, str]:
