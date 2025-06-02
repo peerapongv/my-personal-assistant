@@ -9,6 +9,8 @@
   4. Plain-text requirements → automated Jira Epics/Stories/Sub-tasks  
   5. Automated creation of Jira tickets  
   6. (Optional) Auto-updating Markdown summary of Jira items  
+  7. Monorepo structure with Backend API, Frontend UI, and Shared packages  
+  8. Chatbot integration layer and IDE-based AI coding assistant via MCP server, both using a shared Jira wrapper  
 
 ---
 
@@ -17,7 +19,7 @@
 
 ### Story 1.0: Initialize Project Skeleton  
 - **Summary:**  
-  As a developer, I want to initialize the project skeleton, so that the codebase has a standardized structure, linting, and CI/CD in place.
+  As a developer, I want to initialize the project skeleton, so that the codebase has a standardized structure, linting, and CI/CD toolchain in place from day one.  
 - **Acceptance Criteria:**  
   - Standard Python layout (`src/`, `tests/`, `pyproject.toml`) with Ruff configured and zero violations.  
   - GitHub Actions workflow (`ci.yml`) runs lint, type-check, and tests on every push.  
@@ -41,10 +43,10 @@
 
 ### Story 1.1: Configure Multi-LLM Client  
 - **Summary:**  
-  As a developer, I want to configure the LangChain client to interface with multiple LLM providers, so that the system can generate responses from any supported model.
+  As a developer, I want to configure the LangChain client to interface with multiple LLM providers, so that the system can generate responses from any supported model.  
 - **Acceptance Criteria:**  
   - LangChain wrapper initializes OpenAI, Vertex AI, Claude clients.  
-  - Credentials loaded securely; provider switch logic tested.
+  - Credentials loaded securely; provider switch logic tested.  
 
 #### Sub-tasks  
 1. **Create LangChain Client Wrapper**  
@@ -72,10 +74,10 @@
 
 ### Story 1.2: Integrate Jira Data Retrieval  
 - **Summary:**  
-  As a developer, I want to integrate with Jira’s REST API to fetch Epics, Stories, and Tasks (with filters), so that the assistant can access up-to-date backlog data.
+  As a developer, I want to integrate with Jira’s REST API to fetch Epics, Stories, and Tasks (with filters), so that the assistant can access up-to-date backlog data.  
 - **Acceptance Criteria:**  
   - Client methods `get_epics()`, `get_stories()`, `get_tasks()` support filters (`labels`, `assignee`, `status`).  
-  - Pagination handled seamlessly; JSON matches internal schema.
+  - Pagination handled seamlessly; JSON matches internal schema.  
 
 #### Sub-tasks  
 1. **Develop Jira API Client Module**  
@@ -87,7 +89,7 @@
 
 2. **Implement Fetch Methods with Filters**  
    - **Description:**  
-     Extend client to accept filter params, translate to JQL, and combine multiple filters correctly, with validation & logging.  
+     Extend client to accept filter params, translate to JQL, and combine multiple filters correctly, with validation and logging.  
    - **Definition of Done:**  
      - `get_tasks(labels=["backend"], assignee="mork")` yields correct issues.  
      - Invalid filters raise `FilterValidationError`; tests cover scenarios.  
@@ -103,22 +105,22 @@
 
 ### Story 1.3: Implement Authentication & Error Handling  
 - **Summary:**  
-  As a developer, I want robust authentication and error handling for both LLM and Jira APIs, so system reliability is ensured under failure conditions.
+  As a developer, I want robust authentication and error handling for both LLM and Jira APIs, so system reliability is ensured under failure conditions.  
 - **Acceptance Criteria:**  
   - Support Jira Basic Auth & OAuth; LLM API keys.  
-  - Retries on 429/5xx with exponential backoff; clear error messages surfaced.
+  - Retries on 429/5xx with exponential backoff; clear error messages surfaced.  
 
 #### Sub-tasks  
 1. **Configure Authentication Mechanisms**  
    - **Description:**  
-     Implement Jira Basic Auth and OAuth2 flows; read LLM keys from secure storage, handle token refresh. Document flows.  
+     Implement Jira Basic Auth and OAuth2 flows; read LLM keys from secure storage; handle token refresh. Document flows.  
    - **Definition of Done:**  
      - Both auth flows succeed; invalid creds produce clear errors.  
      - Tests mock expired tokens and verify refresh logic.  
 
 2. **Add Retry & Backoff Logic**  
    - **Description:**  
-     Use `tenacity` to retry on transient errors (429, 5xx) up to 3 attempts with exponential backoff starting at 1s, configurable via env vars.  
+     Use `tenacity` to retry on transient errors (429, 5xx) up to 3 attempts with exponential backoff starting at 1s; make retries configurable via environment variables.  
    - **Definition of Done:**  
      - Retries occur with logs reflecting attempts; tests simulate failures and assert behavior.  
 
@@ -133,17 +135,17 @@
 
 ### Story 1.4: Configure Logging & Monitoring  
 - **Summary:**  
-  As a developer, I want structured logging and basic monitoring for API interactions, so we can track system health and performance.
+  As a developer, I want structured logging and basic monitoring for API interactions, so we can track system health and performance.  
 - **Acceptance Criteria:**  
   - JSON-formatted logs include `timestamp`, `level`, `endpoint`, `duration_ms`.  
-  - `/metrics` endpoint exposes Prometheus counters & histograms.
+  - `/metrics` endpoint exposes Prometheus counters and histograms.  
 
 #### Sub-tasks  
 1. **Implement Structured Logging**  
    - **Description:**  
      Use `structlog` for JSON logs; wrap API calls to log entry/exit, excluding sensitive data.  
    - **Definition of Done:**  
-     - Logs emitted in valid JSON; sample logs provided.  
+     - Logs are emitted in valid JSON; sample logs provided.  
      - Tests parse logs to verify schema compliance.  
 
 2. **Instrument Metrics Collection**  
@@ -154,21 +156,21 @@
 
 3. **Update Documentation**  
    - **Description:**  
-     Add “Observability” section to README with logging & metrics setup, including sample `prometheus.yml`.  
+     Add “Observability” section to README with logging and metrics setup, including sample `prometheus.yml`.  
    - **Definition of Done:**  
      - README updated with clear instructions and examples.  
 
 ---
 
 ## Epic 2: AI-Driven Backlog Analysis & Automated Ticket Management  
-**Goal:** Provide intelligent backlog analysis, hierarchical reporting, and end-to-end automation for Jira ticket creation.
+**Goal:** Provide intelligent analysis of backlog items, hierarchical reporting, and end-to-end automation for creating and documenting Jira tickets.
 
 ### Story 2.1: Fetch and Filter Backlog Items  
 - **Summary:**  
-  As a product owner, I want to fetch all Epics, Stories & Tasks (or filter by label, assignee, etc.), so that I can review and focus on relevant backlog items.
+  As a product owner, I want to fetch all Epics, Stories & Tasks (or filter by label, assignee, etc.), so that I can review and focus on relevant backlog items.  
 - **Acceptance Criteria:**  
-  - CLI/function accepts `--label`, `--assignee`, `--status` flags; outputs JSON.  
-  - Invalid filters yield descriptive errors; tests cover edge cases.
+  - CLI/function accepts `--label`, `--assignee`, `--status` flags and outputs JSON.  
+  - Invalid filters yield descriptive errors; tests cover edge cases.  
 
 #### Sub-tasks  
 1. **Define Filter Parameter Schema**  
@@ -194,10 +196,10 @@
 
 ### Story 2.2: Generate Hierarchical Backlog Reports  
 - **Summary:**  
-  As a product owner, I want a hierarchical report grouping Epics → Stories → Tasks, so that I can visualize project structure at a glance.
+  As a product owner, I want a hierarchical report grouping Epics → Stories → Tasks, so that I can visualize project structure at a glance.  
 - **Acceptance Criteria:**  
   - JSON and Markdown outputs correctly represent the hierarchy with Jira links.  
-  - Orphans and edge cases handled gracefully; tests validate outputs.
+  - Orphans and edge cases handled gracefully; tests validate outputs.  
 
 #### Sub-tasks  
 1. **Implement Hierarchy Builder**  
@@ -208,7 +210,7 @@
 
 2. **Create JSON Formatter**  
    - **Description:**  
-     Serialize hierarchy to JSON matching `hierarchy-schema.json`, including `key`, `summary`, `url`.  
+     Serialize hierarchy to JSON matching `hierarchy-schema.json`, including `key`, `summary`, and `url`.  
    - **Definition of Done:**  
      - Output validates against schema; integration test parses back correctly.  
 
@@ -222,10 +224,10 @@
 
 ### Story 2.3: Parse Plain-Text Requirements into Ticket Structure  
 - **Summary:**  
-  As a product owner, I want to input new requirements in plain text, so that the assistant can generate corresponding Epics, Stories, and Sub-tasks automatically.
+  As a product owner, I want to input new requirements in plain text, so that the assistant can generate corresponding Epics, Stories, and Sub-tasks automatically.  
 - **Acceptance Criteria:**  
   - LLM prompt template yields valid JSON.  
-  - Parsing and validation reject malformed outputs; tests cover failure modes.
+  - Parsing and validation reject malformed outputs; tests cover failure modes.  
 
 #### Sub-tasks  
 1. **Design LLM Prompt Template**  
@@ -250,10 +252,10 @@
 
 ### Story 2.4: Automated Jira Ticket Creation  
 - **Summary:**  
-  As a product owner, I want the assistant to create Jira items via the API, so that tickets are added automatically.
+  As a product owner, I want the assistant to create Jira items via the API, so that tickets are added automatically.  
 - **Acceptance Criteria:**  
   - Epics → Stories → Sub-tasks created in order with correct links.  
-  - Duplicate detection skips existing items; errors retried or surfaced.
+  - Duplicate detection skips existing items; errors retried or surfaced.  
 
 #### Sub-tasks  
 1. **Implement Ticket Creation Service**  
@@ -278,10 +280,10 @@
 
 ### Story 2.5: Maintain Markdown Summary File  
 - **Summary:**  
-  As a product owner, I want the assistant to update a Markdown summary of Jira items after ticket creation, so documentation stays current.
+  As a product owner, I want the assistant to update a Markdown summary of Jira items after ticket creation, so documentation stays current.  
 - **Acceptance Criteria:**  
   - Summary file updates automatically post-creation.  
-  - Hierarchy and links are correct; tests validate content.
+  - Hierarchy and links are correct; tests validate content.  
 
 #### Sub-tasks  
 1. **Develop Markdown Generator Module**  
@@ -301,3 +303,45 @@
      Save or commit the Markdown file to a configurable location (local or Git), with optional dry-run mode that outputs diffs.  
    - **Definition of Done:**  
      - File writes or commits succeed in tests; dry-run prints correct diff.  
+
+---
+
+## Epic 3: Chatbot & IDE Integration Layer  
+**Goal:** Expose a single, DRY Jira integration wrapper that can be invoked by both the conversational chatbot and the IDE’s AI coding assistant (via the MCP server) without duplicating API logic.
+
+### Story 3.1: Shared Jira Integration for Chatbot & IDE  
+- **Summary:**  
+  As an end user, I want the chatbot to call Jira for conversational queries and the AI coding assistant in my IDE (via the MCP server) to fetch Jira ticket data—both using the same underlying integration—so that we maintain a single code path without duplication.  
+- **Acceptance Criteria:**  
+  1. The chatbot’s NLU/intent classifier recognizes at least three Jira-related intents (e.g., “show ticket,” “update status,” “list my tasks”) and routes them to `jira_tool(...)` without any new Jira API code written for the chatbot.  
+  2. A `POST /mcp/jira-fetch` with a valid body (`{ "issue_key": "PROJ-123", "action": "get" }`) triggers exactly one call to `jira_tool("PROJ-123", action="get", payload={})` and returns the ticket JSON.  
+  3. Both chatbot unit tests and MCP integration tests use a mocked `jira_client`; they assert that every Jira request—regardless of origin—goes through the same wrapper function `jira_tool`.  
+  4. Unauthorized or malformed MCP requests return 401 or 400 with a clear JSON error body. Transient 5xx or 429 responses from `jira_client` trigger up to two retries before surfacing a failure.  
+
+#### Sub-tasks  
+1. **Extend Chatbot Agent to Invoke Shared `jira_tool`**  
+   - **Description:**  
+     Update the LangChain agent’s prompt templates and NLU routing so that any user utterance containing Jira keywords (e.g., “ticket,” “issue,” “PROJ-123”) or action verbs (e.g., “close,” “comment,” “assign”) extracts `issue_key` and `action` and then calls the new `jira_tool(...)` wrapper. This wrapper must internally call `jira_client.get_ticket(...)` or `jira_client.update_ticket(...)` without duplicating HTTP or JQL logic.  
+     Adjust the agent’s code so that, upon receiving the `jira_tool` result (ticket JSON), it formats a conversational response (e.g., “PROJ-123 is currently In Progress”).  
+   - **Definition of Done:**  
+     - Agent NLU tests confirm that at least three Jira-related intents are recognized with ≥90% accuracy in mocks.  
+     - `jira_tool` calls into `jira_client.get_ticket()`/`jira_client.update_ticket()` exactly—no low-level HTTP code in agent.  
+     - A sample chatbot interaction in unit tests (“What’s the status of PROJ-123?”) results in exactly one call to `jira_tool("PROJ-123", action="get")` and returns the correct JSON response.  
+
+2. **Implement MCP Server Endpoint to Call Shared `jira_tool`**  
+   - **Description:**  
+     Create a new route in the MCP server (e.g., `POST /mcp/jira-fetch`) that accepts a JSON body `{ "issue_key": "...", "action": "get" }`. The route handler must verify an `MCP_API_KEY` from headers or `.env`, then call `jira_tool(issue_key, action, {})`, and return the ticket JSON to the IDE’s AI coding assistant.  
+     Handle error scenarios—such as invalid or missing `MCP_API_KEY`, malformed JSON, or `jira_client` returning 4xx/5xx—by returning a structured JSON error (including `error_code` and `message`) and applying a retry on 5xx/429 up to two attempts.  
+   - **Definition of Done:**  
+     - A `POST /mcp/jira-fetch` with valid credentials and body triggers exactly one invocation of `jira_tool` (confirmed by mocking `jira_client`) and returns 200 with the ticket JSON.  
+     - Requests with missing/invalid `MCP_API_KEY` return HTTP 401 with `{ "error_code": "unauthorized", "message": "Invalid API key" }`.  
+     - If `jira_client` first returns a 500, then a 200, the MCP endpoint retries once, and returns 200 on the second attempt. Tests simulate these scenarios.  
+
+3. **Add Unit & Integration Tests for Chatbot vs. MCP Paths**  
+   - **Description:**  
+     Write unit tests (in `packages/api/tests/`) that mock `jira_client` and verify that—when the chatbot receives “Show me PROJ-123”—it calls `jira_tool("PROJ-123", action="get")`. Separately, write integration tests that spin up a mocked MCP server and simulate a `POST /mcp/jira-fetch` call, confirming one `jira_tool` invocation.  
+     Ensure tests cover both “happy path” (200) and failure paths (401, 500 → retry).  
+   - **Definition of Done:**  
+     - `test_chatbot_jira_tool.py` has at least one scenario: “chatbot asks status” → mock `jira_client` returns a ticket; assert exactly one wrapper call and correct return.  
+     - `test_mcp_jira_fetch.py` includes: valid request → one wrapper call; missing API key → 401; 500 → retry → 200. All tests pass in CI.  
+
