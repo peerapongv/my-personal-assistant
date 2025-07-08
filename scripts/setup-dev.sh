@@ -87,7 +87,8 @@ cd "$PROJECT_ROOT_DIR"
 
 echo "\nFormatting Python code with Ruff..."
 if command_exists ruff; then
-  ruff format packages/api packages/shared
+  ruff check --fix packages/api/.
+  ruff check --fix packages/shared/.
   echo "Python code formatting complete for API and Shared packages." 
   # You might also want to format any .py files directly in the root if you have them, e.g., setup.py (though you use pyproject.toml)
   # ruff format *.py # Uncomment if you have .py files in the root to format

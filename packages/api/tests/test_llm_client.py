@@ -2,7 +2,7 @@
 
 import logging
 
-from jira_assistant.llm_client import LLMClient
+from my_personal_assistant_api.core.llm_client import LLMClient
 
 # Configure basic logging
 logging.basicConfig(level=logging.INFO)
